@@ -39,6 +39,26 @@ public:
 	{}
 
 
+	struct ApplyAtTransitionFunc
+	{
+		ApplyAtTransitionFunc(Parent& p, StateFunc c, StateFunc n)
+			: parent(p)
+			, current(c)
+			, next(n)
+		{}
+
+		void operator( )(AtTransitBehavior behavior) const 
+		{
+			if (current != behavior.transition.prev) { return; }
+			if (next != behavior.transition.next) { return; }
+
+			(parent.*behavior.behavior)( );
+		}
+
+		Parent&		parent;
+		StateFunc	current;
+		StateFunc	next;
+	};
 
 	void Transit( )
 	{
@@ -46,18 +66,11 @@ public:
 
 		const StateFunc next = (m_parent.*m_current_state_func)( );
 
-
-		for (
-				typename Behavior::iterator itr = m_at_transit_behavior.begin( );
-				itr != m_at_transit_behavior.end( );
-				++itr
-			) 
-		{
-			if (m_current_state_func != (*itr).transition.prev) { continue; }
-			if (next != (*itr).transition.next) { continue; }
-			(m_parent.*(*itr).behavior)( );
-		}
-
+		std::for_each(
+			m_at_transit_behavior.begin( ), 
+			m_at_transit_behavior.end( ), 
+			ApplyAtTransitionFunc(m_parent, m_current_state_func, next)
+			);
 		
 
 		m_current_state_func = next;
