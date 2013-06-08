@@ -10,10 +10,25 @@ public:
 	typedef StateFuncObject (Parent::*StateFunc)();
 
 	typedef void (Parent::*AtTransitFunc)( );
-	struct AtTransitBehavior
+
+	struct Transition
 	{
+		Transition(StateFunc p, StateFunc n)
+			: prev(p)
+			, next(n)
+		{}
+
 		StateFunc		prev;
 		StateFunc		next;
+	};
+
+	struct AtTransitBehavior
+	{
+		AtTransitBehavior(Transition t, AtTransitFunc b)
+			: transition(t)
+			, behavior(b)
+		{}
+		Transition		transition;
 		AtTransitFunc	behavior;
 	};
 
@@ -22,6 +37,8 @@ public:
 		, m_current_state_func(init_state)
 		, m_at_transit_behavior( )
 	{}
+
+
 
 	void Transit( )
 	{
@@ -36,8 +53,8 @@ public:
 				++itr
 			) 
 		{
-			if (m_current_state_func != (*itr).prev) { continue; }
-			if (next != (*itr).next) { continue; }
+			if (m_current_state_func != (*itr).transition.prev) { continue; }
+			if (next != (*itr).transition.next) { continue; }
 			(m_parent.*(*itr).behavior)( );
 		}
 

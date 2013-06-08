@@ -9,12 +9,13 @@ public:
 		:m_state_machine(*this, &Tester::Hello)
 		,m_counter(0) 
 	{
-		const IntrusiveStateMachine<Tester>::AtTransitBehavior behavior =
-		{
-			&Tester::Hello, 
-			&Tester::Bye, 
-			&Tester::ChangeMind
-		};
+		const IntrusiveStateMachine<Tester>::AtTransitBehavior behavior ( 
+				IntrusiveStateMachine<Tester>::Transition (
+					&Tester::Hello, 
+					&Tester::Bye 
+				), 
+				&Tester::ChangeMind
+			);
 
 		m_state_machine.AddAtTransitBehavior(behavior);
 	} 
@@ -37,14 +38,14 @@ private:
 
 	IntrusiveStateMachine<Tester>::StateFuncObject Bye( )
 	{
-		std::cout << "Bye" << std::endl; 
+		std::cout << "Bye!" << std::endl; 
 
 		return NULL;
 	}
 
 	void ChangeMind( )
 	{
-		std::cout << "Are you Tired?" << std::endl;
+		std::cout << "...Are you Tired?" << std::endl;
 	}
 
 
