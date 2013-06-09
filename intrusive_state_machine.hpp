@@ -13,10 +13,22 @@ public:
 
 	struct Transition
 	{
-		Transition(StateFunc p, StateFunc n)
-			: prev(p)
-			, next(n)
+		Transition()
+			: prev(NULL)
+			, next(NULL)
 		{}
+
+		Transition& From(StateFunc p)
+		{
+			prev = p;
+			return *this;
+		}
+
+		Transition& To(StateFunc n)
+		{
+			next = n;
+			return *this;
+		}
 
 		StateFunc		prev;
 		StateFunc		next;
@@ -24,12 +36,32 @@ public:
 
 	struct AtTransitBehavior
 	{
-		AtTransitBehavior(Transition t, AtTransitFunc b)
+		AtTransitBehavior(Transition t = Transition( ), AtTransitFunc b = NULL)
 			: transition(t)
 			, behavior(b)
 		{}
+
+
+
 		Transition		transition;
 		AtTransitFunc	behavior;
+
+		AtTransitBehavior& Exec(AtTransitFunc f)
+		{
+			behavior = f;
+			return *this;
+		}
+
+		AtTransitBehavior& From(StateFunc f)
+		{
+			transition.prev = f;
+			return *this;
+		}
+		AtTransitBehavior& To(StateFunc f)
+		{
+			transition.next = f;
+			return *this;
+		}
 	};
 
 	IntrusiveStateMachine(Parent& parent, StateFunc init_state)
@@ -76,26 +108,29 @@ public:
 		m_current_state_func = next;
 	}
 
+	void Add(AtTransitBehavior behavior)
+	{
+		m_at_transit_behavior.push_back(behavior);
+	}
+
 
 	bool Is(StateFunc state_func) const
 	{
 		return m_current_state_func == state_func;
 	}
 
-	void AddAtTransitBehavior(AtTransitBehavior new_behavior)
-	{
-		m_at_transit_behavior.push_back(new_behavior);
-	}
+
 
 
 
 
 
 private:
+	typedef std::vector<AtTransitBehavior> Behavior;
+
 	Parent&		m_parent;
 	StateFunc	m_current_state_func;
-	typedef std::vector<AtTransitBehavior> Behavior;
-	Behavior m_at_transit_behavior;
+	Behavior	m_at_transit_behavior;
 
 
 

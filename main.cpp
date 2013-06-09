@@ -6,19 +6,18 @@
 class Tester
 {
 public:
+	typedef IntrusiveStateMachine<Tester>::StateFuncObject StateFunc;
+
 	Tester( ) 
 		:m_state_machine(*this, &Tester::Hello)
 		,m_counter(0) 
 	{
-		const IntrusiveStateMachine<Tester>::AtTransitBehavior behavior ( 
-				IntrusiveStateMachine<Tester>::Transition (
-					&Tester::Hello, 
-					&Tester::Bye 
-				), 
-				&Tester::ChangeMind
-			);
-
-		m_state_machine.AddAtTransitBehavior(behavior);
+		m_state_machine.Add(
+			IntrusiveStateMachine<Tester>::AtTransitBehavior( )
+				.Exec(&Tester::ChangeMind)
+				.From(&Tester::Hello)
+				.To(&Tester::Bye)
+		);
 	} 
 
 	void Update( ) { m_state_machine.Transit( ); }
@@ -26,20 +25,19 @@ public:
 	bool IsEnd() const { return m_state_machine.Is(NULL); }
 
 
-
 private:
-	IntrusiveStateMachine<Tester>::StateFuncObject Hello( )
+	StateFunc Hello( )
 	{
-		std::cout << "Hello" << std::endl; 
+		std::cout << "Hello!" << std::endl; 
 		++m_counter;
 		if (m_counter < 10) { return &Tester::Hello; }
 
 		return &Tester::Bye;
 	}
 
-	IntrusiveStateMachine<Tester>::StateFuncObject Bye( )
+	StateFunc Bye( )
 	{
-		std::cout << "Bye!" << std::endl; 
+		std::cout << "Bye..." << std::endl; 
 
 		return NULL;
 	}
@@ -55,6 +53,11 @@ private:
 	IntrusiveStateMachine<Tester> m_state_machine;
 	int m_counter;
 };
+
+
+
+
+
 
 int main(int argc,  char* argv[]) {
 	Tester tester;
