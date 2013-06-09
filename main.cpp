@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 
+//// Class For Sample IntrusiveStateMachine
 class Tester
 {
 public:
