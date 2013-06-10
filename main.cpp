@@ -13,7 +13,7 @@ public:
 		,m_counter(0) 
 	{
 		m_state_machine.Add(
-			IntrusiveStateMachine<Tester>::AtTransitBehavior( )
+			IntrusiveStateMachine<Tester>::Behavior( )
 				.Exec(&Tester::ChangeMind)
 				.From(&Tester::Hello)
 				.To(&Tester::Bye)

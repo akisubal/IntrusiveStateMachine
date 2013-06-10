@@ -34,9 +34,9 @@ public:
 		StateFunc		next;
 	};
 
-	struct AtTransitBehavior
+	struct Behavior
 	{
-		AtTransitBehavior(Transition t = Transition( ), AtTransitFunc b = NULL)
+		Behavior(Transition t = Transition( ), AtTransitFunc b = NULL)
 			: transition(t)
 			, behavior(b)
 		{}
@@ -46,18 +46,18 @@ public:
 		Transition		transition;
 		AtTransitFunc	behavior;
 
-		AtTransitBehavior& Exec(AtTransitFunc f)
+		Behavior& Exec(AtTransitFunc f)
 		{
 			behavior = f;
 			return *this;
 		}
 
-		AtTransitBehavior& From(StateFunc f)
+		Behavior& From(StateFunc f)
 		{
 			transition.prev = f;
 			return *this;
 		}
-		AtTransitBehavior& To(StateFunc f)
+		Behavior& To(StateFunc f)
 		{
 			transition.next = f;
 			return *this;
@@ -79,7 +79,7 @@ public:
 			, next(n)
 		{}
 
-		void operator( )(AtTransitBehavior behavior) const 
+		void operator( )(Behavior behavior) const 
 		{
 			if (current != behavior.transition.prev) { return; }
 			if (next != behavior.transition.next) { return; }
@@ -108,7 +108,7 @@ public:
 		m_current_state_func = next;
 	}
 
-	void Add(AtTransitBehavior behavior)
+	void Add(Behavior behavior)
 	{
 		m_at_transit_behavior.push_back(behavior);
 	}
@@ -126,11 +126,9 @@ public:
 
 
 private:
-	typedef std::vector<AtTransitBehavior> Behavior;
-
 	Parent&		m_parent;
 	StateFunc	m_current_state_func;
-	Behavior	m_at_transit_behavior;
+	std::vector<Behavior> m_at_transit_behavior;
 
 
 
