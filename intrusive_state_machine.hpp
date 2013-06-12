@@ -1,3 +1,4 @@
+#include <list>
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
@@ -8,6 +9,13 @@ class IntrusiveStateMachine
 public:
 	class StateFuncObject;
 	typedef StateFuncObject (Parent::*StateFunc)();
+	struct StateFuncCompare
+	{
+		bool operator( )(StateFunc lhs, StateFunc rhs) const
+		{ 
+			return reinterpret_cast<unsigned long>(lhs) < reinterpret_cast<unsigned long>(rhs);
+		};
+	};
 
 	typedef void (Parent::*AtTransitFunc)( );
 
@@ -34,16 +42,65 @@ public:
 		StateFunc		next;
 	};
 
+	class StateSets
+	{
+	public:
+		StateSets()
+			: m_sets( )
+		{}
+
+		StateSets(StateFunc s) : m_sets( )
+		{
+			m_sets.push_back(s);
+		}
+
+		void Add(StateFunc s)
+		{
+			m_sets.push_back(s);
+		}
+
+		bool Includes(StateFunc s) const {
+			return std::find(m_sets.begin( ), m_sets.end( ),  StateFuncObject(s)) != m_sets.end( );
+		}
+
+
+	private:
+		std::list<StateFuncObject> m_sets;
+	};
+
+	struct Condition
+	{
+		Condition()
+			: prev()
+			, next()
+		{}
+
+		Condition& From(Condition p)
+		{
+			prev = p;
+			return *this;
+		}
+
+		Condition& To(Condition n)
+		{
+			next = n;
+			return *this;
+		}
+
+		StateSets	prev;
+		StateSets	next;
+	};
+
 	struct Behavior
 	{
-		Behavior(Transition t = Transition( ), AtTransitFunc b = NULL)
-			: transition(t)
+		Behavior(Condition c = Condition( ), AtTransitFunc b = NULL)
+			: condition(c)
 			, behavior(b)
 		{}
 
 
 
-		Transition		transition;
+		Condition		condition;
 		AtTransitFunc	behavior;
 
 		Behavior& Exec(AtTransitFunc f)
@@ -52,17 +109,20 @@ public:
 			return *this;
 		}
 
-		Behavior& From(StateFunc f)
+		Behavior& From(StateSets c)
 		{
-			transition.prev = f;
+			condition.prev = c;
 			return *this;
 		}
-		Behavior& To(StateFunc f)
+		Behavior& To(StateSets c)
 		{
-			transition.next = f;
+			condition.next = c;
 			return *this;
 		}
 	};
+	
+
+
 
 	IntrusiveStateMachine(Parent& parent, StateFunc init_state)
 		: m_parent(parent)
@@ -71,9 +131,10 @@ public:
 	{}
 
 
-	struct ApplyAtTransitionFunc
+
+	struct ApplyBehavior
 	{
-		ApplyAtTransitionFunc(Parent& p, StateFunc c, StateFunc n)
+		ApplyBehavior(Parent& p, StateFunc c, StateFunc n)
 			: parent(p)
 			, current(c)
 			, next(n)
@@ -81,8 +142,8 @@ public:
 
 		void operator( )(Behavior behavior) const 
 		{
-			if (current != behavior.transition.prev) { return; }
-			if (next != behavior.transition.next) { return; }
+			if (! behavior.condition.prev.Includes(current)) { return; }
+			if (! behavior.condition.next.Includes(next)) { return; }
 
 			(parent.*behavior.behavior)( );
 		}
@@ -101,7 +162,7 @@ public:
 		std::for_each(
 			m_at_transit_behavior.begin( ), 
 			m_at_transit_behavior.end( ), 
-			ApplyAtTransitionFunc(m_parent, m_current_state_func, next)
+			ApplyBehavior(m_parent, m_current_state_func, next)
 			);
 		
 
@@ -142,6 +203,11 @@ public:
 	public:
 		StateFuncObject(StateFunc s) : m_state_func(s) {}
 		operator StateFunc( ){ return m_state_func; }
+
+		bool operator==(const StateFuncObject& s) const 
+		{
+			return m_state_func == s.m_state_func;
+		}
 	private:
 		StateFunc m_state_func;
 	};

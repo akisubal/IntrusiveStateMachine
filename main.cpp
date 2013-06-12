@@ -21,8 +21,8 @@ public:
 	} 
 
 	void Update( ) { m_state_machine.Transit( ); }
-
 	bool IsEnd() const { return m_state_machine.Is(NULL); }
+
 
 
 private:
