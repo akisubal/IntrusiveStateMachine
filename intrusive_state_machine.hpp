@@ -58,6 +58,11 @@ public:
 		{
 			m_sets.push_back(s);
 		}
+		StateSets& And(StateFunc s)
+		{
+			Add(s);
+			return *this;
+		}
 
 		bool Includes(StateFunc s) const {
 			return std::find(m_sets.begin( ), m_sets.end( ),  StateFuncObject(s)) != m_sets.end( );

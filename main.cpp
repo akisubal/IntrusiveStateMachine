@@ -2,6 +2,11 @@
 #include <iostream>
 #include <cstdlib>
 
+int RollTwelveFacesDice( ) 
+{
+	return std::rand( ) % 12;
+}
+
 //// Class For Sample IntrusiveStateMachine
 class Tester
 {
@@ -9,14 +14,28 @@ public:
 	typedef IntrusiveStateMachine<Tester>::StateFuncObject StateFunc;
 
 	Tester( ) 
-		:m_state_machine(*this, &Tester::Hello)
+		:m_state_machine(*this, &Tester::Sleeping)
 		,m_counter(0) 
 	{
 		m_state_machine.Add(
 			IntrusiveStateMachine<Tester>::Behavior( )
-				.Exec(&Tester::ChangeMind)
-				.From(&Tester::Hello)
-				.To(&Tester::Bye)
+				.Exec(&Tester::SayGoodMorning)
+				.From(&Tester::Sleeping)
+				.To(&Tester::Walking)
+		);
+
+		m_state_machine.Add(
+			IntrusiveStateMachine<Tester>::Behavior( )
+				.Exec(&Tester::SayGoodNight)
+				.From(&Tester::Walking)
+				.To(&Tester::Sleeping)
+		);
+
+		m_state_machine.Add(
+			IntrusiveStateMachine<Tester>::Behavior( )
+				.Exec(&Tester::ResetCounter)
+				.From(IntrusiveStateMachine<Tester>::StateSets(&Tester::Walking).And(&Tester::InAnger))
+				.To(&Tester::Sleeping)
 		);
 	} 
 
@@ -26,32 +45,70 @@ public:
 
 
 private:
-	StateFunc Hello( )
+	StateFunc Sleeping( )
 	{
-		std::cout << "Hello!" << std::endl; 
+		std::cout << "zzz..." << std::endl;
+
+		if (RollTwelveFacesDice( ) < m_counter) {
+			return &Tester::Walking;
+		}
+
+		if (RollTwelveFacesDice( ) < 1) {
+			return &Tester::InAnger;
+		}
+
 		++m_counter;
-		if (m_counter < 10) { return &Tester::Hello; }
 
-		return &Tester::Bye;
+		return &Tester::Sleeping;
 	}
 
-	StateFunc Bye( )
+	StateFunc Walking( )
 	{
-		std::cout << "Bye..." << std::endl; 
-
-		return NULL;
+		std::cout << "It's nice today." << std::endl;
+		if (RollTwelveFacesDice( ) < 3) {
+			return &Tester::InAnger;
+		}
+	
+		return &Tester::Walking;
 	}
 
-	void ChangeMind( )
+	StateFunc InAnger( )
 	{
-		std::cout << "...Are you Tired?" << std::endl;
+		std::cout << "Gyaaaaa!!!" << std::endl;
+
+		if (RollTwelveFacesDice( ) < 3) {
+			return &Tester::Walking;
+		}
+
+		if (RollTwelveFacesDice( ) < 1) {
+			return &Tester::Sleeping;
+		}
+
+		return &Tester::InAnger;
+	}
+
+	
+
+	void SayGoodMorning( )
+	{ 
+		std::cout << "Hi. Good morning" << std::endl;
+	}
+
+	void SayGoodNight( )
+	{
+		std::cout << "...I'm sleepy. Good night." << std::endl;
 	}
 
 
+	void ResetCounter( )
+	{
+		m_counter = 0;
+	}
 
 private:
 	IntrusiveStateMachine<Tester> m_state_machine;
 	int m_counter;
+
 };
 
 
@@ -60,8 +117,9 @@ private:
 
 
 int main(int argc,  char* argv[]) {
+	if (argc < 1) { return 0; }
 	Tester tester;
-	while (! tester.IsEnd( )) {
+	for (int i(0); i < std::atoi(argv[1]); ++i) {
 		tester.Update( );
 	}
  
