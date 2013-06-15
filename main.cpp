@@ -26,13 +26,6 @@ public:
 
 		m_state_machine.Add(
 			IntrusiveStateMachine<Tester>::Behavior( )
-				.Exec(&Tester::SayGoodNight)
-				.From(&Tester::Walking)
-				.To(&Tester::Sleeping)
-		);
-
-		m_state_machine.Add(
-			IntrusiveStateMachine<Tester>::Behavior( )
 				.Exec(&Tester::ResetCounter)
 				.From(IntrusiveStateMachine<Tester>::StateSets(&Tester::Walking).And(&Tester::InAnger))
 				.To(&Tester::Sleeping)

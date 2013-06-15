@@ -9,38 +9,9 @@ class IntrusiveStateMachine
 public:
 	class StateFuncObject;
 	typedef StateFuncObject (Parent::*StateFunc)();
-	struct StateFuncCompare
-	{
-		bool operator( )(StateFunc lhs, StateFunc rhs) const
-		{ 
-			return reinterpret_cast<unsigned long>(lhs) < reinterpret_cast<unsigned long>(rhs);
-		};
-	};
 
 	typedef void (Parent::*AtTransitFunc)( );
 
-	struct Transition
-	{
-		Transition()
-			: prev(NULL)
-			, next(NULL)
-		{}
-
-		Transition& From(StateFunc p)
-		{
-			prev = p;
-			return *this;
-		}
-
-		Transition& To(StateFunc n)
-		{
-			next = n;
-			return *this;
-		}
-
-		StateFunc		prev;
-		StateFunc		next;
-	};
 
 	class StateSets
 	{
