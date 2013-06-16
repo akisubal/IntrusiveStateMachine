@@ -11,23 +11,23 @@ int RollTwelveFacesDice( )
 class Tester
 {
 public:
-	typedef IntrusiveStateMachine<Tester>::StateFuncObject StateFunc;
+	typedef ism::IntrusiveStateMachine<Tester>::StateFuncObject StateFunc;
 
 	Tester( ) 
 		:m_state_machine(*this, &Tester::Sleeping)
 		,m_counter(0) 
 	{
 		m_state_machine.Add(
-			IntrusiveStateMachine<Tester>::Behavior( )
+			ism::IntrusiveStateMachine<Tester>::Behavior( )
 				.Exec(&Tester::SayGoodMorning)
 				.From(&Tester::Sleeping)
 				.To(&Tester::Walking)
 		);
 
 		m_state_machine.Add(
-			IntrusiveStateMachine<Tester>::Behavior( )
+			ism::IntrusiveStateMachine<Tester>::Behavior( )
 				.Exec(&Tester::ResetCounter)
-				.From(IntrusiveStateMachine<Tester>::StateSets(&Tester::Walking).And(&Tester::InAnger))
+				.From(ism::IntrusiveStateMachine<Tester>::StateSets(&Tester::Walking).And(&Tester::InAnger))
 				.To(&Tester::Sleeping)
 		);
 	} 
@@ -99,7 +99,7 @@ private:
 	}
 
 private:
-	IntrusiveStateMachine<Tester> m_state_machine;
+	ism::IntrusiveStateMachine<Tester> m_state_machine;
 	int m_counter;
 
 };

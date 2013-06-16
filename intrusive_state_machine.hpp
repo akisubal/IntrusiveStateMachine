@@ -5,6 +5,10 @@
 #include <algorithm>
 #include <cstdlib>
 
+namespace ism
+{
+
+
 template <class Parent>
 class IntrusiveStateMachine
 {
@@ -41,10 +45,11 @@ public:
 			return std::find(m_sets.begin( ), m_sets.end( ),  StateFuncObject(s)) != m_sets.end( );
 		}
 
-
 	private:
 		std::list<StateFuncObject> m_sets;
 	};
+
+	// ComplementarySet UniversalSet EmptySet 
 
 	struct Condition
 	{
@@ -190,3 +195,6 @@ public:
 		StateFunc m_state_func;
 	};
 };
+
+
+}
