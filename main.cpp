@@ -7,6 +7,9 @@ int RollTwelveFacesDice( )
 	return std::rand( ) % 12;
 }
 
+
+
+
 //// Class For Sample IntrusiveStateMachine
 class Tester
 {
@@ -110,7 +113,7 @@ private:
 
 
 int main(int argc,  char* argv[]) {
-	if (argc < 1) { return 0; }
+	if (argc < 2) { return 0; }
 	Tester tester;
 	for (int i(0); i < std::atoi(argv[1]); ++i) {
 		tester.Update( );

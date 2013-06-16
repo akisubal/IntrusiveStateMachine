@@ -23,17 +23,17 @@ public:
 	{
 	public:
 		StateSets()
-			: m_sets( )
+			: m_elements( )
 		{}
 
-		StateSets(StateFunc s) : m_sets( )
+		StateSets(StateFunc s) : m_elements( )
 		{
-			m_sets.push_back(s);
+			m_elements.push_back(s);
 		}
 
 		void Add(StateFunc s)
 		{
-			m_sets.push_back(s);
+			m_elements.push_back(s);
 		}
 		StateSets& And(StateFunc s)
 		{
@@ -42,11 +42,11 @@ public:
 		}
 
 		bool Includes(StateFunc s) const {
-			return std::find(m_sets.begin( ), m_sets.end( ),  StateFuncObject(s)) != m_sets.end( );
+			return std::find(m_elements.begin( ), m_elements.end( ),  StateFuncObject(s)) != m_elements.end( );
 		}
 
 	private:
-		std::list<StateFuncObject> m_sets;
+		std::list<StateFuncObject> m_elements;
 	};
 
 	// ComplementarySet UniversalSet EmptySet 
