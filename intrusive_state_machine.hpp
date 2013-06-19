@@ -49,7 +49,6 @@ public:
 		std::list<StateFuncObject> m_elements;
 	};
 
-	// ComplementarySet UniversalSet EmptySet 
 
 	struct Condition
 	{

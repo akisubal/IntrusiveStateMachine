@@ -1,4 +1,5 @@
 #include "intrusive_state_machine.hpp"
+#include "mathematical_set.hpp"
 #include <iostream>
 #include <cstdlib>
 
