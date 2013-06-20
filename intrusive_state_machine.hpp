@@ -1,9 +1,9 @@
 #pragma once
 
-#include <list>
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
+#include "mathematical_set.hpp"
 
 namespace ism
 {
@@ -23,17 +23,17 @@ public:
 	{
 	public:
 		StateSets()
-			: m_elements( )
+			: m_elements(MathematicalSet<StateFunc>::EmptySet( ) )
 		{}
 
 		StateSets(StateFunc s) : m_elements( )
 		{
-			m_elements.push_back(s);
+			Add(s);
 		}
 
 		void Add(StateFunc s)
 		{
-			m_elements.push_back(s);
+			m_elements.Add(s);
 		}
 		StateSets& And(StateFunc s)
 		{
@@ -42,11 +42,11 @@ public:
 		}
 
 		bool Includes(StateFunc s) const {
-			return std::find(m_elements.begin( ), m_elements.end( ),  StateFuncObject(s)) != m_elements.end( );
+			return m_elements.Contains(s);
 		}
 
 	private:
-		std::list<StateFuncObject> m_elements;
+		MathematicalSet<StateFunc> m_elements;
 	};
 
 

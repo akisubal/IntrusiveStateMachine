@@ -19,11 +19,16 @@ public:
 		return MathematicalSet(Excludes);
 	}
 	
-
-	MathematicalSet(const T& t)
+	MathematicalSet()
 		: m_elements( )
+		, m_type(Includes)
+	{ }
+
+	MathematicalSet(const T& e)
+		: m_elements( )
+		, m_type(Includes)
 	{
-		Add(t);
+		Add(e);
 	}
 
 	void Add(const T& t)
@@ -47,9 +52,9 @@ public:
 	}
 
 
-	bool Contains(const T& t)
+	bool Contains(const T& t) const
 	{ 
-		const typename std::list<T>::iterator found =
+		const typename std::list<T>::const_iterator found =
 			std::find(m_elements.begin( ),  m_elements.end( ), t);
 
 		return 
@@ -72,6 +77,12 @@ private:
 	{
 		return t == m_type;
 	}
+
+	MathematicalSet(Type t)
+		: m_elements( )
+		, m_type(t)
+	{ }
+
 
 	friend MathematicalSet<T> operator+(const MathematicalSet<T>& lhs,  const MathematicalSet<T>& rhs);
 	friend MathematicalSet<T> operator*(const MathematicalSet<T>& lhs,  const MathematicalSet<T>& rhs);
