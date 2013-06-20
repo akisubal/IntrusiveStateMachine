@@ -23,17 +23,17 @@ public:
 	{
 	public:
 		StateSets()
-			: m_elements(MathematicalSet<StateFunc>::EmptySet( ) )
+			: m_set(MathematicalSet<StateFunc>::EmptySet( ) )
 		{}
 
-		StateSets(StateFunc s) : m_elements( )
+		StateSets(StateFunc s) : m_set( )
 		{
 			Add(s);
 		}
 
 		void Add(StateFunc s)
 		{
-			m_elements.Add(s);
+			m_set.Add(s);
 		}
 		StateSets& And(StateFunc s)
 		{
@@ -41,12 +41,12 @@ public:
 			return *this;
 		}
 
-		bool Includes(StateFunc s) const {
-			return m_elements.Contains(s);
+		bool Contains(StateFunc s) const {
+			return m_set.Contains(s);
 		}
 
 	private:
-		MathematicalSet<StateFunc> m_elements;
+		MathematicalSet<StateFunc> m_set;
 	};
 
 
@@ -124,8 +124,8 @@ public:
 
 		void operator( )(Behavior behavior) const 
 		{
-			if (! behavior.condition.prev.Includes(current)) { return; }
-			if (! behavior.condition.next.Includes(next)) { return; }
+			if (! behavior.condition.prev.Contains(current)) { return; }
+			if (! behavior.condition.next.Contains(next)) { return; }
 
 			(parent.*behavior.behavior)( );
 		}
