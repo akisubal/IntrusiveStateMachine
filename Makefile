@@ -16,7 +16,7 @@ main.o:	main.cpp intrusive_state_machine.hpp mathematical_set.hpp
 
 
 build_test:	test.cpp test_mathematical_set.hpp
-	$(CXX) -o $@ -I$(GTEST_DIR)/include $(GTEST_DIR)/libgtest.a test.cpp
+	$(CXX) -o $@ -I$(GTEST_DIR)/include $(GTEST_DIR)/libgtest.a $(GTEST_DIR)/libgtest_main.a test.cpp
 
 
 

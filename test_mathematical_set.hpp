@@ -1,3 +1,4 @@
+#include "mathematical_set.hpp"
 namespace ism
 {
 
@@ -80,5 +81,6 @@ TEST(MathematicalSet, ExcludesRemove)
 	EXPECT_FALSE(set.Contains(1));
 	EXPECT_FALSE(set.Contains(2));
 }
+
 
 }
