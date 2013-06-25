@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <algorithm>
 #include <cassert>
 namespace ism
 {

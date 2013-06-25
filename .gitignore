@@ -4,3 +4,9 @@
 intrusive_state_machine
 
 *.o
+
+ism
+
+test
+
+build_test
