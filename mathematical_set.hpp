@@ -206,12 +206,12 @@ template <class T>
 MathematicalSet<T> operator~(const MathematicalSet<T>& set)
 {
 	MathematicalSet<T> ret;
-	ret.m_elements = set.m_elemets;
+	ret.m_elements = set.m_elements;
 	if (set.m_type == MathematicalSet<T>::Includes) {
-		set.m_type = MathematicalSet<T>::Excludes;
+		ret.m_type = MathematicalSet<T>::Excludes;
 	}
 	if (set.m_type == MathematicalSet<T>::Excludes) {
-		set.m_type = MathematicalSet<T>::Includes;
+		ret.m_type = MathematicalSet<T>::Includes;
 	}
 
 	return ret;

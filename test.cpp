@@ -1,12 +1,6 @@
 #include <gtest/gtest.h>
 #include "mathematical_set.hpp"
-
-TEST(MathematicalSet,  Empty)
-{
-	ism::MathematicalSet<int> empty(ism::MathematicalSet<int>::EmptySet( ));
-	EXPECT_FALSE(empty.Contains(2));
-}
-
+#include "test_mathematical_set.hpp"
 
 int main(int argc,  char* argv[])
 {
