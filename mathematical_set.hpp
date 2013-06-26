@@ -63,6 +63,29 @@ public:
 			: (! isInElements(t));
 	}
 
+
+	bool operator==(const MathematicalSet<T>& target)
+	{
+		if (this->m_type != target.m_type) { return false; }
+		if (this->m_elements.size( ) != target.m_elements.size( )) { return false; }
+
+		const typename std::list<T>::const_iterator end(this->m_elements.end( ));
+		for(
+				typename std::list<T>::const_iterator itr(this->m_elements.begin( ));
+				itr != end;
+				++itr
+			)
+		{
+			if (! target.isInElements(*itr)) { return false; }
+		}
+
+
+
+
+
+		return true;
+	}
+
 private:
 	enum Type
 	{
@@ -89,6 +112,8 @@ private:
 			std::find(m_elements.begin( ), m_elements.end( ), t);
 		return (found != m_elements.end( ));
 	}
+
+
 
 
 	template  <class Type> 
@@ -122,23 +147,27 @@ MathematicalSet<T> operator+(const MathematicalSet<T>& lhs,  const MathematicalS
 	}
 
 	if (lhs.definesWith(MathematicalSet<T>::Includes) && rhs.definesWith(MathematicalSet<T>::Includes)) {
-		std::list<T> tmp;
-		tmp = lhs;
-		tmp.merge(rhs.m_elements);
-		tmp.unique( );
+		std::list<T> new_elements(lhs.m_elements);
+		std::list<T> tail(rhs.m_elements);
+		
+		new_elements.splice(new_elements.end( ), tail);
+		new_elements.unique( );
 
 
 		MathematicalSet<T> ret;
-		ret.m_elements.swap(tmp);
+		ret.m_elements.swap(new_elements);
 		ret.m_type = MathematicalSet<T>::Includes; 
 		return ret;
 	}
 
 	if (lhs.definesWith(MathematicalSet<T>::Excludes) && rhs.definesWith(MathematicalSet<T>::Excludes)) {
-		std::list<T> tmp;
-		tmp = lhs;
+		std::list<T> tmp(lhs.m_elements);
 
-		for (typename std::list<T>::const_iterator itr(lhs.m_elements.begin( )); itr != lhs.m_elements.end( );  ++itr) {
+		for (
+				typename std::list<T>::const_iterator itr(lhs.m_elements.begin( ));
+				itr != lhs.m_elements.end( );
+				++itr
+			) {
 			if (! rhs.Contains(*itr)) { continue; }
 			tmp.remove(*itr);
 		}
@@ -175,7 +204,7 @@ MathematicalSet<T> operator*(const MathematicalSet<T>& lhs,  const MathematicalS
 
 	if (lhs.definesWith(MathematicalSet<T>::Excludes) && rhs.definesWith(MathematicalSet<T>::Excludes)) {
 		std::list<T> tmp;
-		tmp.merge(rhs.m_elements);
+		tmp.splice(tmp.end( ),  rhs.m_elements);
 		tmp.unique( );
 
 		MathematicalSet<T> ret;

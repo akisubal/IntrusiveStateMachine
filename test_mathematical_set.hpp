@@ -48,9 +48,11 @@ TEST(MathematicalSet, Complementaly)
 	EXPECT_TRUE(set.Contains(1));
 	EXPECT_FALSE(set.Contains(2));
 
-	set = ~ set;
+	set = ~set;
 	EXPECT_FALSE(set.Contains(1));
 	EXPECT_TRUE(set.Contains(2));
+
+	EXPECT_TRUE(set == ~~set);
 }
 
 TEST(MathematicalSet, ExcludesAdd)
@@ -58,7 +60,7 @@ TEST(MathematicalSet, ExcludesAdd)
 	MathematicalSet<int> set(1);
 	set.Add(2);
 
-	set = ~ set;
+	set = ~set;
 
 	EXPECT_FALSE(set.Contains(1));
 	EXPECT_FALSE(set.Contains(2));
@@ -72,7 +74,7 @@ TEST(MathematicalSet, ExcludesRemove)
 {
 	MathematicalSet<int> set(1);
 
-	set = ~ set;
+	set = ~set;
 
 	EXPECT_FALSE(set.Contains(1));
 	EXPECT_TRUE(set.Contains(2));
@@ -82,5 +84,97 @@ TEST(MathematicalSet, ExcludesRemove)
 	EXPECT_FALSE(set.Contains(2));
 }
 
+TEST(MathematicalSet, IncludesPlusIncludes)
+{
+	MathematicalSet<int> left(1);
+	left.Add(3);
+
+	MathematicalSet<int> right(2);
+	right.Add(3);
+
+	MathematicalSet<int> result(left + right);
+
+	EXPECT_TRUE(result.Contains(1));
+	EXPECT_TRUE(result.Contains(2));
+	EXPECT_TRUE(result.Contains(3));
+	EXPECT_FALSE(result.Contains(5));
+}
+
+
+TEST(MathematicalSet, ExcludesPlusExcludes)
+{
+	MathematicalSet<int> left(1);
+	left.Add(3);
+	left = ~left;
+
+	MathematicalSet<int> right(2);
+	right.Add(3);
+	right = ~right;
+
+	MathematicalSet<int> result(left + right);
+
+	EXPECT_TRUE(result.Contains(1));
+	EXPECT_TRUE(result.Contains(2));
+	EXPECT_FALSE(result.Contains(3));
+	EXPECT_TRUE(result.Contains(5));
+}
+
+TEST(MathematicalSet, IncludesPlusExcludes)
+{
+	MathematicalSet<int> left(1);
+	left.Add(3);
+
+	MathematicalSet<int> right(2);
+	right.Add(3);
+	right = ~right;
+
+	MathematicalSet<int> result(left + right);
+
+	EXPECT_TRUE(result.Contains(1));
+	EXPECT_FALSE(result.Contains(2));
+	EXPECT_TRUE(result.Contains(3));
+	EXPECT_TRUE(result.Contains(5));
+}
+
+TEST(MathematicalSet, Equal)
+{
+	MathematicalSet<int> base(2);
+	base.Add(3);
+
+	MathematicalSet<int> same(3);
+	same.Add(2);
+	EXPECT_TRUE(base == same);
+
+
+	MathematicalSet<int> over(same);
+	over.Add(4);
+	EXPECT_FALSE(base == over);
+
+
+
+	MathematicalSet<int> differ(1);
+	differ.Add(3);
+	EXPECT_FALSE(base == differ);
+
+
+	MathematicalSet<int> complementary(base);
+	complementary = ~complementary; 
+	EXPECT_FALSE(base == complementary);
+}
+
+TEST(MathematicalSet, PlusCommunitativeLow)
+{
+	MathematicalSet<int> left(2);
+	left.Add(3);
+	left = ~left;
+
+	MathematicalSet<int> right(1);
+	right.Add(3);
+
+
+	MathematicalSet<int> result(left + right);
+
+	EXPECT_TRUE((left + right) == (right + left));
+}
 
 }
