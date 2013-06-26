@@ -64,7 +64,7 @@ public:
 	}
 
 
-	bool operator==(const MathematicalSet<T>& target)
+	bool operator==(const MathematicalSet<T>& target) const
 	{
 		if (this->m_type != target.m_type) { return false; }
 		if (this->m_elements.size( ) != target.m_elements.size( )) { return false; }
@@ -80,10 +80,23 @@ public:
 		}
 
 
-
-
-
 		return true;
+	}
+
+	MathematicalSet<T> operator~() const
+	{
+		std::list<T> new_list(this->m_elements);
+
+		MathematicalSet<T> ret;
+		ret.m_elements.swap(new_list);
+		if (this->m_type == MathematicalSet<T>::Includes) {
+			ret.m_type = MathematicalSet<T>::Excludes;
+		}
+		if (this->m_type == MathematicalSet<T>::Excludes) {
+			ret.m_type = MathematicalSet<T>::Includes;
+		}
+
+		return ret;
 	}
 
 private:
@@ -231,20 +244,6 @@ MathematicalSet<T> operator*(const MathematicalSet<T>& lhs,  const MathematicalS
 }
 
 
-template <class T>
-MathematicalSet<T> operator~(const MathematicalSet<T>& set)
-{
-	MathematicalSet<T> ret;
-	ret.m_elements = set.m_elements;
-	if (set.m_type == MathematicalSet<T>::Includes) {
-		ret.m_type = MathematicalSet<T>::Excludes;
-	}
-	if (set.m_type == MathematicalSet<T>::Excludes) {
-		ret.m_type = MathematicalSet<T>::Includes;
-	}
-
-	return ret;
-}
 
 		 
 }
