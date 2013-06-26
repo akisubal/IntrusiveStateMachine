@@ -133,8 +133,6 @@ private:
 	friend MathematicalSet<Type> operator+(const MathematicalSet<Type>& lhs,  const MathematicalSet<Type>& rhs);
 	template  <class Type> 
 	friend MathematicalSet<Type> operator*(const MathematicalSet<Type>& lhs,  const MathematicalSet<Type>& rhs);
-	template  <class Type> 
-	friend MathematicalSet<Type> operator~(const MathematicalSet<Type>& set);
 };
 
 template <class T>
