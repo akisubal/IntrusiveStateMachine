@@ -177,4 +177,72 @@ TEST(MathematicalSet, PlusCommunitativeLow)
 	EXPECT_TRUE((left + right) == (right + left));
 }
 
+TEST(MathematicalSet, IncludesMultIncludes)
+{
+	MathematicalSet<int> left(1);
+	left.Add(3);
+
+	MathematicalSet<int> right(2);
+	right.Add(3);
+
+	MathematicalSet<int> result(left * right);
+
+	EXPECT_FALSE(result.Contains(1));
+	EXPECT_FALSE(result.Contains(2));
+	EXPECT_TRUE(result.Contains(3));
+	EXPECT_FALSE(result.Contains(5));
+}
+
+
+TEST(MathematicalSet, ExcludesMultExcludes)
+{
+	MathematicalSet<int> left(1);
+	left.Add(3);
+	left = ~left;
+
+	MathematicalSet<int> right(2);
+	right.Add(3);
+	right = ~right;
+
+	MathematicalSet<int> result(left * right);
+
+	EXPECT_FALSE(result.Contains(1));
+	EXPECT_FALSE(result.Contains(2));
+	EXPECT_FALSE(result.Contains(3));
+	EXPECT_TRUE(result.Contains(5));
+}
+
+TEST(MathematicalSet, IncludesMultExcludes)
+{
+	MathematicalSet<int> left(1);
+	left.Add(3);
+
+	MathematicalSet<int> right(2);
+	right.Add(3);
+	right = ~right;
+
+	MathematicalSet<int> result(left * right);
+
+	EXPECT_TRUE(result.Contains(1));
+	EXPECT_FALSE(result.Contains(2));
+	EXPECT_FALSE(result.Contains(3));
+	EXPECT_FALSE(result.Contains(5));
+}
+
+
+TEST(MathematicalSet, MultCommunitativeLow)
+{
+	MathematicalSet<int> left(2);
+	left.Add(3);
+	left = ~left;
+
+	MathematicalSet<int> right(1);
+	right.Add(3);
+
+
+	MathematicalSet<int> result(left * right);
+
+	EXPECT_TRUE((left * right) == (right * left));
+}
+
 }

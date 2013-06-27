@@ -201,7 +201,7 @@ template <class T>
 MathematicalSet<T> operator*(const MathematicalSet<T>& lhs,  const MathematicalSet<T>& rhs)
 {
 	if (lhs.definesWith(MathematicalSet<T>::Excludes) && rhs.definesWith(MathematicalSet<T>::Includes)) {
-		return rhs + lhs;
+		return rhs * lhs;
 	}
 
 	if (lhs.definesWith(MathematicalSet<T>::Includes) && rhs.definesWith(MathematicalSet<T>::Excludes)) {
@@ -220,8 +220,9 @@ MathematicalSet<T> operator*(const MathematicalSet<T>& lhs,  const MathematicalS
 	}
 
 	if (lhs.definesWith(MathematicalSet<T>::Excludes) && rhs.definesWith(MathematicalSet<T>::Excludes)) {
-		std::list<T> tmp;
-		tmp.splice(tmp.end( ),  rhs.m_elements);
+		std::list<T> tmp(lhs.m_elements);
+		std::list<T> tail(rhs.m_elements);
+		tmp.splice(tmp.end( ),  tail);
 		tmp.unique( );
 
 		MathematicalSet<T> ret;
@@ -231,11 +232,10 @@ MathematicalSet<T> operator*(const MathematicalSet<T>& lhs,  const MathematicalS
 	}
 
 	if (lhs.definesWith(MathematicalSet<T>::Includes) && rhs.definesWith(MathematicalSet<T>::Includes)) {
-		std::list<T> tmp;
-		tmp = lhs;
+		std::list<T> tmp(lhs.m_elements);
 
 		for (typename std::list<T>::const_iterator itr(lhs.m_elements.begin( )); itr != lhs.m_elements.end( );  ++itr) {
-			if (! rhs.Contains(*itr)) { continue; }
+			if (rhs.Contains(*itr)) { continue; }
 			tmp.remove(*itr);
 		}
 
