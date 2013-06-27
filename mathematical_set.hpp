@@ -146,6 +146,56 @@ public:
 
 
 
+	MathematicalSet<T> operator*(const MathematicalSet<T>& mult) const
+	{
+		if (this->definesWith(MathematicalSet<T>::Excludes) && mult.definesWith(MathematicalSet<T>::Includes)) {
+			return mult * (*this);
+		}
+
+		if (this->definesWith(MathematicalSet<T>::Includes) && mult.definesWith(MathematicalSet<T>::Excludes)) {
+			std::list<T> tmp;
+			tmp = this->m_elements;
+
+			for (typename std::list<T>::const_iterator itr(mult.m_elements.begin( )); itr != mult.m_elements.end( );  ++itr) {
+				tmp.remove(*itr);
+			}
+
+
+			MathematicalSet<T> ret;
+			ret.m_elements.swap(tmp);
+			ret.m_type = MathematicalSet<T>::Includes;
+			return ret;
+		}
+
+		if (this->definesWith(MathematicalSet<T>::Excludes) && mult.definesWith(MathematicalSet<T>::Excludes)) {
+			std::list<T> tmp(this->m_elements);
+			std::list<T> tail(mult.m_elements);
+			tmp.splice(tmp.end( ),  tail);
+			tmp.unique( );
+
+			MathematicalSet<T> ret;
+			ret.m_elements.swap(tmp);
+			ret.m_type = MathematicalSet<T>::Excludes; 
+			return ret;
+		}
+
+		if (this->definesWith(MathematicalSet<T>::Includes) && mult.definesWith(MathematicalSet<T>::Includes)) {
+			std::list<T> tmp(this->m_elements);
+
+			for (typename std::list<T>::const_iterator itr(this->m_elements.begin( )); itr != this->m_elements.end( );  ++itr) {
+				if (mult.Contains(*itr)) { continue; }
+				tmp.remove(*itr);
+			}
+
+
+			MathematicalSet<T> ret;
+			ret.m_elements.swap(tmp);
+			ret.m_type = MathematicalSet<T>::Includes; 
+			return ret;
+		}
+	}
+
+
 	MathematicalSet<T> operator~() const
 	{
 		std::list<T> new_list(this->m_elements);
@@ -192,60 +242,8 @@ private:
 
 
 
-	template  <class Type> 
-	friend MathematicalSet<Type> operator*(const MathematicalSet<Type>& lhs,  const MathematicalSet<Type>& rhs);
 };
 
-
-template <class T>
-MathematicalSet<T> operator*(const MathematicalSet<T>& lhs,  const MathematicalSet<T>& rhs)
-{
-	if (lhs.definesWith(MathematicalSet<T>::Excludes) && rhs.definesWith(MathematicalSet<T>::Includes)) {
-		return rhs * lhs;
-	}
-
-	if (lhs.definesWith(MathematicalSet<T>::Includes) && rhs.definesWith(MathematicalSet<T>::Excludes)) {
-		std::list<T> tmp;
-		tmp = lhs.m_elements;
-
-		for (typename std::list<T>::const_iterator itr(rhs.m_elements.begin( )); itr != rhs.m_elements.end( );  ++itr) {
-			tmp.remove(*itr);
-		}
-
-
-		MathematicalSet<T> ret;
-		ret.m_elements.swap(tmp);
-		ret.m_type = MathematicalSet<T>::Includes;
-		return ret;
-	}
-
-	if (lhs.definesWith(MathematicalSet<T>::Excludes) && rhs.definesWith(MathematicalSet<T>::Excludes)) {
-		std::list<T> tmp(lhs.m_elements);
-		std::list<T> tail(rhs.m_elements);
-		tmp.splice(tmp.end( ),  tail);
-		tmp.unique( );
-
-		MathematicalSet<T> ret;
-		ret.m_elements.swap(tmp);
-		ret.m_type = MathematicalSet<T>::Excludes; 
-		return ret;
-	}
-
-	if (lhs.definesWith(MathematicalSet<T>::Includes) && rhs.definesWith(MathematicalSet<T>::Includes)) {
-		std::list<T> tmp(lhs.m_elements);
-
-		for (typename std::list<T>::const_iterator itr(lhs.m_elements.begin( )); itr != lhs.m_elements.end( );  ++itr) {
-			if (rhs.Contains(*itr)) { continue; }
-			tmp.remove(*itr);
-		}
-
-
-		MathematicalSet<T> ret;
-		ret.m_elements.swap(tmp);
-		ret.m_type = MathematicalSet<T>::Includes; 
-		return ret;
-	}
-}
 
 
 
