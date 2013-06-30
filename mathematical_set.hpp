@@ -47,6 +47,27 @@ public:
 		Add(e);
 	}
 
+	MathematicalSet(const MathematicalSet<T>& src)
+		: m_elements( )
+		, m_type(src.m_type)
+	{
+		std::list<T> tmp(src.m_elements); 
+		m_elements.swap(tmp);
+	}
+
+	MathematicalSet<T>& operator=(const MathematicalSet<T>& src)
+	{
+		MathematicalSet<T> tmp(src);
+
+		this->Swap(tmp);
+	}
+
+	void Swap(MathematicalSet<T>& target)
+	{
+		std::swap(m_type, target.m_type);
+		m_elements.swap(target.m_elements);
+	}
+
 	void Add(const T& t)
 	{ 
 		if (this->definesWith(Includes)) {
@@ -101,10 +122,7 @@ public:
 
 	MathematicalSet<T> operator+(const MathematicalSet<T>& adder) const
 	{
-		if (this->definesWith(Excludes) && adder.definesWith(Includes)) 
-		{
-			return adder + (*this);
-		}
+		if (this->definesWith(Excludes) && adder.definesWith(Includes)) { return adder + (*this); }
 
 		if (this->definesWith(Includes) && adder.definesWith(Excludes)) {
 			std::list<T> tmp;
@@ -193,7 +211,8 @@ public:
 			return ret;
 		}
 
-		if (this->definesWith(Includes) && mult.definesWith(Includes)) {
+		if (this->definesWith(Includes) && mult.definesWith(Includes))
+		{
 			std::list<T> tmp(this->m_elements);
 
 			for (

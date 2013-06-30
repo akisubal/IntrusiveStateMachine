@@ -245,4 +245,46 @@ TEST(MathematicalSet, MultCommunitativeLow)
 	EXPECT_TRUE((left * right) == (right * left));
 }
 
+TEST(MathmaticalSet,  Copy)
+{
+	MathematicalSet<int> src(2);
+	MathematicalSet<int> dst(src);
+
+	EXPECT_TRUE(src == dst);
+}
+
+TEST(MathematicalSet,  Swap)
+{
+	MathematicalSet<int> a(2);
+	MathematicalSet<int> b(3);
+
+
+	EXPECT_TRUE(a.Contains(2));
+	EXPECT_FALSE(a.Contains(3));
+
+	EXPECT_FALSE(b.Contains(2));
+	EXPECT_TRUE(b.Contains(3));
+
+	a.Swap(b);
+
+	EXPECT_FALSE(a.Contains(2));
+	EXPECT_TRUE(a.Contains(3));
+
+	EXPECT_TRUE(b.Contains(2));
+	EXPECT_FALSE(b.Contains(3));
+}
+
+TEST(MathmaticalSet,  Assign)
+{
+	MathematicalSet<int> src(2);
+	MathematicalSet<int> dst(3);
+
+	EXPECT_FALSE(src == dst);
+
+	dst = src;
+
+	EXPECT_TRUE(src == dst);
+}
+
+
 }
