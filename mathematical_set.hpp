@@ -248,16 +248,11 @@ public:
 
 	MathematicalSet<T> operator~() const
 	{
-		std::list<T> new_list(this->m_elements);
+		std::list<T> tmp(this->m_elements);
 
 		MathematicalSet<T> ret;
-		ret.m_elements.swap(new_list);
-		if (this->m_type == MathematicalSet<T>::Includes) {
-			ret.m_type = MathematicalSet<T>::Excludes;
-		}
-		if (this->m_type == MathematicalSet<T>::Excludes) {
-			ret.m_type = MathematicalSet<T>::Includes;
-		}
+		ret.m_elements.swap(tmp);
+		ret.m_type = flipType(this->m_type);
 
 		return ret;
 	}
@@ -269,15 +264,30 @@ private:
 		Excludes, 
 	};
 
+	static Type flipType(Type t)
+	{
+		if (t == Includes) { return Excludes; }
+		if (t == Excludes) { return Includes; }
+
+		assert(! "unreachable sentence");
+		return Includes;
+	}
+
 	std::list<T>	m_elements;
 	Type			m_type;
 
-	bool definesWith(Type t) const { return t == m_type; }
 
+
+
+
+private:
 	explicit MathematicalSet(Type t)
 		: m_elements( )
 		, m_type(t)
 	{ }
+
+
+	bool definesWith(Type t) const { return t == m_type; }
 
 	bool isInElements(const T& t) const
 	{
