@@ -101,19 +101,12 @@ public:
 
 	MathematicalSet<T> operator+(const MathematicalSet<T>& adder) const
 	{
-		if (
-				this->definesWith(MathematicalSet<T>::Excludes) && 
-				adder.definesWith(MathematicalSet<T>::Includes)
-			) 
+		if (this->definesWith(Excludes) && adder.definesWith(Includes)) 
 		{
 			return adder + (*this);
 		}
 
-		if (
-				this->definesWith(MathematicalSet<T>::Includes) && 
-				adder.definesWith(MathematicalSet<T>::Excludes)
-				)
-		{
+		if (this->definesWith(Includes) && adder.definesWith(Excludes)) {
 			std::list<T> tmp;
 			tmp = adder.m_elements;
 
@@ -131,11 +124,7 @@ public:
 			return ret;
 		}
 
-		if (
-				this->definesWith(MathematicalSet<T>::Includes) &&
-				adder.definesWith(MathematicalSet<T>::Includes)
-				)
-		{
+		if (this->definesWith(Includes) && adder.definesWith(Includes)) {
 			std::list<T> tmp(getMergeUnorderList(this->m_elements, adder.m_elements));
 			
 			MathematicalSet<T> ret;
@@ -144,11 +133,7 @@ public:
 			return ret;
 		}
 
-		if (
-				this->definesWith(MathematicalSet<T>::Excludes) &&
-				adder.definesWith(MathematicalSet<T>::Excludes)
-			)
-		{
+		if (this->definesWith(Excludes) && adder.definesWith(Excludes)) {
 			std::list<T> tmp(this->m_elements);
 
 			for (
@@ -175,19 +160,11 @@ public:
 
 	MathematicalSet<T> operator*(const MathematicalSet<T>& mult) const
 	{
-		if (
-				this->definesWith(MathematicalSet<T>::Excludes) &&
-				mult.definesWith(MathematicalSet<T>::Includes)
-			)
-		{
+		if (this->definesWith(Excludes) && mult.definesWith(Includes)) {
 			return mult * (*this);
 		}
 
-		if (
-				this->definesWith(MathematicalSet<T>::Includes) &&
-				mult.definesWith(MathematicalSet<T>::Excludes)
-			)
-		{
+		if (this->definesWith(Includes) && mult.definesWith(Excludes)) {
 			std::list<T> tmp;
 			tmp = this->m_elements;
 
@@ -207,11 +184,7 @@ public:
 			return ret;
 		}
 
-		if (
-				this->definesWith(MathematicalSet<T>::Excludes) &&
-				mult.definesWith(MathematicalSet<T>::Excludes)
-			)
-		{
+		if (this->definesWith(Excludes) && mult.definesWith(Excludes)) {
 			std::list<T> tmp(getMergeUnorderList(this->m_elements, mult.m_elements));
 
 			MathematicalSet<T> ret;
@@ -220,11 +193,7 @@ public:
 			return ret;
 		}
 
-		if (
-			this->definesWith(MathematicalSet<T>::Includes) && 
-			mult.definesWith(MathematicalSet<T>::Includes)
-			)
-		{
+		if (this->definesWith(Includes) && mult.definesWith(Includes)) {
 			std::list<T> tmp(this->m_elements);
 
 			for (
