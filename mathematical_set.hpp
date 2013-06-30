@@ -8,6 +8,20 @@ namespace ism
 
 
 template <class T>
+std::list<T> getMergeUnorderList(const std::list<T>& h_, const std::list<T>& t_) 
+{
+	std::list<T> h(h_);
+	std::list<T> t(t_);
+	
+	h.splice(h.end( ), t);
+	h.unique( );
+
+	return h;
+}
+
+
+
+template <class T>
 class MathematicalSet
 {
 public:
@@ -15,6 +29,7 @@ public:
 	{
 		return MathematicalSet(Includes);
 	}
+
 	static MathematicalSet<T> UniversalSet( )
 	{
 		return MathematicalSet(Excludes);
@@ -50,7 +65,6 @@ public:
 		}
 		else if (this->definesWith(Excludes)) {
 			if (isInElements(t)) { return; }
-
 			m_elements.push_back(t);
 		}
 	}
@@ -79,7 +93,6 @@ public:
 			if (! target.isInElements(*itr)) { return false; }
 		}
 
-
 		return true;
 	}
 
@@ -88,18 +101,29 @@ public:
 
 	MathematicalSet<T> operator+(const MathematicalSet<T>& adder) const
 	{
-		if (this->definesWith(MathematicalSet<T>::Excludes) && adder.definesWith(MathematicalSet<T>::Includes)) {
+		if (
+				this->definesWith(MathematicalSet<T>::Excludes) && 
+				adder.definesWith(MathematicalSet<T>::Includes)
+			) 
+		{
 			return adder + (*this);
 		}
 
-		if (this->definesWith(MathematicalSet<T>::Includes) && adder.definesWith(MathematicalSet<T>::Excludes)) {
+		if (
+				this->definesWith(MathematicalSet<T>::Includes) && 
+				adder.definesWith(MathematicalSet<T>::Excludes)
+				)
+		{
 			std::list<T> tmp;
 			tmp = adder.m_elements;
 
-			for (typename std::list<T>::const_iterator itr(this->m_elements.begin( )); itr != this->m_elements.end( ); ++itr) {
+			for (
+					typename std::list<T>::const_iterator itr(this->m_elements.begin( ));
+					itr != this->m_elements.end( );
+					++itr)
+			{
 				tmp.remove(*itr);
 			}
-
 
 			MathematicalSet<T> ret;
 			ret.m_elements.swap(tmp);
@@ -107,21 +131,24 @@ public:
 			return ret;
 		}
 
-		if (this->definesWith(MathematicalSet<T>::Includes) && adder.definesWith(MathematicalSet<T>::Includes)) {
-			std::list<T> new_elements(this->m_elements);
-			std::list<T> tail(adder.m_elements);
+		if (
+				this->definesWith(MathematicalSet<T>::Includes) &&
+				adder.definesWith(MathematicalSet<T>::Includes)
+				)
+		{
+			std::list<T> tmp(getMergeUnorderList(this->m_elements, adder.m_elements));
 			
-			new_elements.splice(new_elements.end( ), tail);
-			new_elements.unique( );
-
-
 			MathematicalSet<T> ret;
-			ret.m_elements.swap(new_elements);
+			ret.m_elements.swap(tmp);
 			ret.m_type = MathematicalSet<T>::Includes; 
 			return ret;
 		}
 
-		if (this->definesWith(MathematicalSet<T>::Excludes) && adder.definesWith(MathematicalSet<T>::Excludes)) {
+		if (
+				this->definesWith(MathematicalSet<T>::Excludes) &&
+				adder.definesWith(MathematicalSet<T>::Excludes)
+			)
+		{
 			std::list<T> tmp(this->m_elements);
 
 			for (
@@ -148,15 +175,28 @@ public:
 
 	MathematicalSet<T> operator*(const MathematicalSet<T>& mult) const
 	{
-		if (this->definesWith(MathematicalSet<T>::Excludes) && mult.definesWith(MathematicalSet<T>::Includes)) {
+		if (
+				this->definesWith(MathematicalSet<T>::Excludes) &&
+				mult.definesWith(MathematicalSet<T>::Includes)
+			)
+		{
 			return mult * (*this);
 		}
 
-		if (this->definesWith(MathematicalSet<T>::Includes) && mult.definesWith(MathematicalSet<T>::Excludes)) {
+		if (
+				this->definesWith(MathematicalSet<T>::Includes) &&
+				mult.definesWith(MathematicalSet<T>::Excludes)
+			)
+		{
 			std::list<T> tmp;
 			tmp = this->m_elements;
 
-			for (typename std::list<T>::const_iterator itr(mult.m_elements.begin( )); itr != mult.m_elements.end( );  ++itr) {
+			for (
+					typename std::list<T>::const_iterator itr(mult.m_elements.begin( ));
+					itr != mult.m_elements.end( ); 
+					++itr
+				)
+			{
 				tmp.remove(*itr);
 			}
 
@@ -167,11 +207,12 @@ public:
 			return ret;
 		}
 
-		if (this->definesWith(MathematicalSet<T>::Excludes) && mult.definesWith(MathematicalSet<T>::Excludes)) {
-			std::list<T> tmp(this->m_elements);
-			std::list<T> tail(mult.m_elements);
-			tmp.splice(tmp.end( ),  tail);
-			tmp.unique( );
+		if (
+				this->definesWith(MathematicalSet<T>::Excludes) &&
+				mult.definesWith(MathematicalSet<T>::Excludes)
+			)
+		{
+			std::list<T> tmp(getMergeUnorderList(this->m_elements, mult.m_elements));
 
 			MathematicalSet<T> ret;
 			ret.m_elements.swap(tmp);
@@ -179,10 +220,19 @@ public:
 			return ret;
 		}
 
-		if (this->definesWith(MathematicalSet<T>::Includes) && mult.definesWith(MathematicalSet<T>::Includes)) {
+		if (
+			this->definesWith(MathematicalSet<T>::Includes) && 
+			mult.definesWith(MathematicalSet<T>::Includes)
+			)
+		{
 			std::list<T> tmp(this->m_elements);
 
-			for (typename std::list<T>::const_iterator itr(this->m_elements.begin( )); itr != this->m_elements.end( );  ++itr) {
+			for (
+				typename std::list<T>::const_iterator itr(this->m_elements.begin( ));
+				itr != this->m_elements.end( );
+				++itr
+				)
+			{
 				if (mult.Contains(*itr)) { continue; }
 				tmp.remove(*itr);
 			}
@@ -222,12 +272,9 @@ private:
 	std::list<T>	m_elements;
 	Type			m_type;
 
-	bool definesWith(Type t) const 
-	{
-		return t == m_type;
-	}
+	bool definesWith(Type t) const { return t == m_type; }
 
-	MathematicalSet(Type t)
+	explicit MathematicalSet(Type t)
 		: m_elements( )
 		, m_type(t)
 	{ }
@@ -238,10 +285,6 @@ private:
 			std::find(m_elements.begin( ), m_elements.end( ), t);
 		return (found != m_elements.end( ));
 	}
-
-
-
-
 };
 
 
