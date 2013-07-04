@@ -7,17 +7,6 @@ namespace ism
 {
 
 
-template <class T>
-std::list<T> getMergeUnorderList(const std::list<T>& h_, const std::list<T>& t_) 
-{
-	std::list<T> h(h_);
-	std::list<T> t(t_);
-	
-	h.splice(h.end( ), t);
-	h.unique( );
-
-	return h;
-}
 
 
 
@@ -283,6 +272,18 @@ private:
 			std::find(m_elements.begin( ), m_elements.end( ), t);
 		return (found != m_elements.end( ));
 	}
+
+	static std::list<T> getMergeUnorderList(const std::list<T>& h_, const std::list<T>& t_) 
+	{
+		std::list<T> h(h_);
+		std::list<T> t(t_);
+		
+		h.splice(h.end( ), t);
+		h.unique( );
+
+		return h;
+	}
+
 };
 
 
