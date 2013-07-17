@@ -105,7 +105,6 @@ public:
 	
 
 
-
 	IntrusiveStateMachine(Parent& parent, StateFunc init_state)
 		: m_parent(parent)
 		, m_current_state_func(init_state)
@@ -151,18 +150,16 @@ public:
 		m_current_state_func = next;
 	}
 
-	void Add(Behavior behavior)
+	void Add(Behavior b)
 	{
-		m_at_transit_behavior.push_back(behavior);
+		m_at_transit_behavior.push_back(b);
 	}
 
 
-	bool Is(StateFunc state_func) const
+	bool Is(StateFunc s) const
 	{
-		return m_current_state_func == state_func;
+		return m_current_state_func == s;
 	}
-
-
 
 
 
